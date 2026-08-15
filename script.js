@@ -18,20 +18,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await mammoth.convertToHtml(
                 { arrayBuffer: arrayBuffer },
                 {
-                    // Обработчик изображений: возвращаем Data URI
                     convertImage: mammoth.images.imgElement(async (image) => {
                         const imageBuffer = await image.read();
                         const base64 = arrayBufferToBase64(imageBuffer);
                         const contentType = image.contentType || 'image/png';
-                        return {
-                            src: `data:${contentType};base64,${base64}`
-                        };
+                        return { src: `data:${contentType};base64,${base64}` };
                     })
                 }
             );
-            // Разделяем HTML на отдельные рецепты и оборачиваем каждый в div.recipe
             const recipesHTML = wrapRecipes(result.value);
             container.innerHTML = recipesHTML;
+
+            // Добавляем обработчики для аккордеона
+            document.querySelectorAll('.recipe-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    header.parentElement.classList.toggle('active');
+                });
+            });
         } catch (error) {
             showError(`Не удалось прочитать документ: ${error.message}`);
         }
@@ -41,29 +44,52 @@ document.addEventListener('DOMContentLoaded', () => {
      * Разделяет HTML по заголовкам <h1> и оборачивает каждый блок в <div class="recipe">
      * Если заголовков <h1> нет, пробует <h2>.
      */
-    function wrapRecipes(htmlString) {
-        // Разделяем по тегу <h1> (с учётом возможных атрибутов)
-        let parts = htmlString.split(/(?=<h1\b)/i);
-        let selector = 'h1';
+function wrapRecipes(htmlString) {
+    // Разделяем по заголовкам h1 или h2
+    let parts = htmlString.split(/(?=<h1\b)/i);
+    let selector = 'h1';
 
-        if (parts.length <= 1) {
-            // Если нет h1, пробуем h2
-            parts = htmlString.split(/(?=<h2\b)/i);
-            selector = 'h2';
-        }
-
-        if (parts.length <= 1) {
-            // Нет заголовков – просто возвращаем исходный HTML
-            return htmlString;
-        }
-
-        // Оборачиваем каждую часть в div.recipe
-        return parts.map(part => {
-            // Удаляем пустые части, если они есть
-            if (part.trim() === '') return '';
-            return `<div class="recipe">${part}</div>`;
-        }).join('');
+    if (parts.length <= 1) {
+        parts = htmlString.split(/(?=<h2\b)/i);
+        selector = 'h2';
     }
+
+    if (parts.length <= 1) {
+        return htmlString; // если заголовков нет, возвращаем как есть
+    }
+
+    return parts.map(part => {
+        if (part.trim() === '') return '';
+
+        // Найти первый тег заголовка в начале
+        const headerRegex = new RegExp('^<'+selector+'\\b[^>]*>(.*?)</'+selector+'>', 'i');
+        const match = part.match(headerRegex);
+        if (!match) return part;
+
+        const headerHTML = match[0];
+        let contentHTML = part.slice(match[0].length);
+
+        // Ищем первый абзац <p>...</p> в contentHTML
+        const pRegex = /<p\b[^>]*>.*?<\/p>/i;
+        const pMatch = contentHTML.match(pRegex);
+        let summaryHTML = '';
+        if (pMatch) {
+            summaryHTML = pMatch[0];
+            // Удаляем найденный абзац из контента
+            contentHTML = contentHTML.replace(pMatch[0], '');
+        }
+
+        return `
+            <div class="recipe">
+                <div class="recipe-header">
+                    ${headerHTML}
+                    ${summaryHTML ? `<div class="recipe-summary">${summaryHTML}</div>` : ''}
+                </div>
+                <div class="recipe-content">${contentHTML}</div>
+            </div>
+        `;
+    }).join('');
+}
 
     // Загрузка с указанного URL при старте
     if (DOCX_URL) {
@@ -102,3 +128,4 @@ function arrayBufferToBase64(buffer) {
     }
     return btoa(binary);
 }
+
