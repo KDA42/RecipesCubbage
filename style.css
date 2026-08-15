@@ -1,0 +1,350 @@
+/* ========== БАЗОВЫЕ СТИЛИ ========== */
+:root {
+    --primary: #4CAF50;
+    --primary-dark: #2e7d32;
+    --primary-light: #81C784;
+    --bg: #f5f7f0;
+    --card-bg: #ffffff;
+    --text: #333333;
+    --text-light: #666666;
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.15);
+    --radius: 12px;
+    --transition: 0.3s ease;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ========== ШАПКА ========== */
+header {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    color: white;
+    padding: 30px 20px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+header::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: patternMove 20s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes patternMove {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(40px, 40px); }
+}
+
+.header-content {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.logo-icon {
+    font-size: 3rem;
+    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+}
+
+header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-bottom: 20px;
+}
+
+nav {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 30px;
+    background: rgba(255, 255, 255, 0.2);
+    transition: var(--transition);
+    backdrop-filter: blur(5px);
+}
+
+nav a:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+/* ========== ОСНОВНОЙ КОНТЕНТ ========== */
+main {
+    flex: 1;
+}
+
+section {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 30px;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+h2 {
+    text-align: center;
+    color: var(--primary-dark);
+    margin-bottom: 20px;
+    font-size: 2rem;
+    position: relative;
+}
+
+h2::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: var(--primary);
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+.subtitle {
+    text-align: center;
+    color: var(--text-light);
+    margin-bottom: 25px;
+}
+
+/* ========== КОНТАКТЫ ========== */
+.contact-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.contact-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px 25px;
+    background: #f9fbf5;
+    border-radius: var(--radius);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: var(--transition);
+    min-width: 250px;
+    flex: 1 1 250px;
+}
+
+.contact-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.icon {
+    width: 30px;
+    height: 30px;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+/* ========== ЗАГРУЗКА ФАЙЛА ========== */
+.file-upload {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.file-label {
+    display: inline-block;
+    padding: 12px 30px;
+    background: var(--primary);
+    color: white;
+    border-radius: 30px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+}
+
+.file-label:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+}
+
+input[type="file"] {
+    display: none;
+}
+
+/* ========== КАРТОЧКИ РЕЦЕПТОВ ========== */
+#recipes-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+/* Карточка рецепта */
+.recipe {
+    background: white;
+    border-radius: var(--radius);
+    padding: 25px;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    border: 1px solid #eaeaea;
+    animation: fadeInUp 0.6s ease both;
+}
+
+.recipe:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-hover);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Заголовок рецепта */
+.recipe h1 {
+    font-size: 1.5rem;
+    color: var(--primary-dark);
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary-light);
+}
+
+/* Подзаголовки */
+.recipe h2,
+.recipe h3,
+.recipe h4 {
+    color: var(--primary);
+    margin-top: 1.2em;
+    margin-bottom: 0.5em;
+    font-size: 1.2rem;
+}
+
+/* Текст и списки */
+.recipe p {
+    margin-bottom: 10px;
+    line-height: 1.7;
+}
+
+.recipe ul,
+.recipe ol {
+    margin-left: 25px;
+    margin-bottom: 15px;
+}
+
+.recipe li {
+    margin-bottom: 5px;
+}
+
+/* Изображения */
+.recipe img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 15px 0;
+    display: block;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.recipe img:hover {
+    transform: scale(1.02);
+}
+
+/* ========== ФУТЕР ========== */
+footer {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: auto;
+}
+
+/* ========== АДАПТИВНОСТЬ ========== */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .logo-icon {
+        font-size: 2rem;
+    }
+
+    section {
+        padding: 20px;
+        margin: 15px;
+    }
+
+    .contact-cards {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .contact-card {
+        justify-content: center;
+    }
+
+    #recipes-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.contact-card a {
+    color: inherit;          /* Наследует цвет текста */
+    text-decoration: none;   /* Убирает подчёркивание */
+    transition: var(--transition);
+}
+
+.contact-card a:hover {
+    color: var(--primary);   /* При наведении подсвечивается фирменным цветом */
+    text-decoration: underline;
+}
