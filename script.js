@@ -129,3 +129,38 @@ function arrayBufferToBase64(buffer) {
     return btoa(binary);
 }
 
+// ===== Подсветка активного пункта меню в шапке =====
+(function () {
+    const navLinks = document.querySelectorAll('nav a[href^="#"]');
+    if (!navLinks.length) return;
+
+    const sections = Array.from(navLinks)
+        .map(a => document.querySelector(a.getAttribute('href')))
+        .filter(Boolean);
+
+    if (!sections.length) return;
+
+    function updateActive() {
+        const scrollPos = window.scrollY + 140; // отступ под sticky-шапку
+        let current = null;
+
+        sections.forEach(sec => {
+            if (sec.offsetTop <= scrollPos) current = sec;
+        });
+
+        // Если прокрутили выше первой секции — ни одна не активна
+        if (window.scrollY < 80) current = null;
+
+        navLinks.forEach(a => {
+            a.classList.toggle(
+                'active',
+                current && a.getAttribute('href') === '#' + current.id
+            );
+        });
+    }
+
+    window.addEventListener('scroll', updateActive, { passive: true });
+    window.addEventListener('resize', updateActive);
+    window.addEventListener('load', updateActive);
+    updateActive();
+})();
